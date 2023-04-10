@@ -5,8 +5,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/spacemonkeygo/openssl"
 	"github.com/sschekotikhin/go-msgauth/dkim"
+	"github.com/sschekotikhin/openssl"
 )
 
 var (

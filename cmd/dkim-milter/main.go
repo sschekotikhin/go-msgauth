@@ -18,9 +18,9 @@ import (
 	"syscall"
 
 	"github.com/emersion/go-milter"
-	"github.com/spacemonkeygo/openssl"
 	"github.com/sschekotikhin/go-msgauth/authres"
 	"github.com/sschekotikhin/go-msgauth/dkim"
+	"github.com/sschekotikhin/openssl"
 )
 
 var (

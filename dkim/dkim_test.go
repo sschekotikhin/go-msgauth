@@ -3,7 +3,7 @@ package dkim
 import (
 	"time"
 
-	"github.com/spacemonkeygo/openssl"
+	"github.com/sschekotikhin/openssl"
 )
 
 const testPrivateKeyPEM = `-----BEGIN RSA PRIVATE KEY-----

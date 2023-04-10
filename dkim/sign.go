@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/spacemonkeygo/openssl"
+	"github.com/sschekotikhin/openssl"
 )
 
 const (
