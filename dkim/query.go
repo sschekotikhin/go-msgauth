@@ -5,12 +5,9 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"net"
 	"strings"
-
-	"golang.org/x/crypto/ed25519"
 )
 
 type verifier interface {
@@ -28,21 +25,6 @@ func (v rsaVerifier) Public() crypto.PublicKey {
 
 func (v rsaVerifier) Verify(hash crypto.Hash, hashed, sig []byte) error {
 	return rsa.VerifyPKCS1v15(v.PublicKey, hash, hashed, sig)
-}
-
-type ed25519Verifier struct {
-	ed25519.PublicKey
-}
-
-func (v ed25519Verifier) Public() crypto.PublicKey {
-	return v.PublicKey
-}
-
-func (v ed25519Verifier) Verify(hash crypto.Hash, hashed, sig []byte) error {
-	if !ed25519.Verify(v.PublicKey, hashed, sig) {
-		return errors.New("dkim: invalid Ed25519 signature")
-	}
-	return nil
 }
 
 type queryResult struct {
@@ -138,13 +120,6 @@ func parsePublicKey(s string) (*queryResult, error) {
 		}
 		res.Verifier = rsaVerifier{rsaPub}
 		res.KeyAlgo = "rsa"
-	case "ed25519":
-		if len(b) != ed25519.PublicKeySize {
-			return nil, permFailError(fmt.Sprintf("invalid Ed25519 public key size: %v bytes", len(b)))
-		}
-		ed25519Pub := ed25519.PublicKey(b)
-		res.Verifier = ed25519Verifier{ed25519Pub}
-		res.KeyAlgo = "ed25519"
 	default:
 		return nil, permFailError("unsupported key algorithm")
 	}

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"crypto"
 	"crypto/rand"
-	"crypto/rsa"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -13,7 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/crypto/ed25519"
+	"github.com/spacemonkeygo/openssl"
+)
+
+const (
+	KeyAlgo = "rsa"
 )
 
 var randReader io.Reader = rand.Reader
@@ -41,8 +44,7 @@ type SignOptions struct {
 	// The key used to sign the message.
 	//
 	// Supported Signer.Public() values are *rsa.PublicKey and
-	// ed25519.PublicKey.
-	Signer crypto.Signer
+	Signer openssl.PrivateKey
 	// The hash algorithm used to sign the message. If zero, a default hash will
 	// be chosen.
 	//
@@ -117,16 +119,6 @@ func NewSigner(options *SignOptions) (*Signer, error) {
 		return nil, fmt.Errorf("dkim: unknown body canonicalization %q", bodyCan)
 	}
 
-	var keyAlgo string
-	switch options.Signer.Public().(type) {
-	case *rsa.PublicKey:
-		keyAlgo = "rsa"
-	case ed25519.PublicKey:
-		keyAlgo = "ed25519"
-	default:
-		return nil, fmt.Errorf("dkim: unsupported key algorithm %T", options.Signer.Public())
-	}
-
 	hash := options.Hash
 	var hashAlgo string
 	switch options.Hash {
@@ -193,7 +185,7 @@ func NewSigner(options *SignOptions) (*Signer, error) {
 
 		params := map[string]string{
 			"v":  "1",
-			"a":  keyAlgo + "-" + hashAlgo,
+			"a":  KeyAlgo + "-" + hashAlgo,
 			"bh": base64.StdEncoding.EncodeToString(bodyHashed),
 			"c":  string(headerCan) + "/" + string(bodyCan),
 			"d":  options.Domain,
@@ -231,7 +223,7 @@ func NewSigner(options *SignOptions) (*Signer, error) {
 		}
 
 		// Hash and sign headers
-		hasher.Reset()
+		buffer := &bytes.Buffer{}
 		picker := newHeaderPicker(h)
 		for _, k := range headerKeys {
 			kv := picker.Pick(k)
@@ -244,7 +236,7 @@ func NewSigner(options *SignOptions) (*Signer, error) {
 			}
 
 			kv = canonicalizers[headerCan].CanonicalizeHeader(kv)
-			if _, err := io.WriteString(hasher, kv); err != nil {
+			if _, err := io.WriteString(buffer, kv); err != nil {
 				closeReadWithError(err)
 				return
 			}
@@ -254,19 +246,13 @@ func NewSigner(options *SignOptions) (*Signer, error) {
 		sigField := formatSignature(params)
 		sigField = canonicalizers[headerCan].CanonicalizeHeader(sigField)
 		sigField = strings.TrimRight(sigField, crlf)
-		if _, err := io.WriteString(hasher, sigField); err != nil {
+		if _, err := io.WriteString(buffer, sigField); err != nil {
 			closeReadWithError(err)
 			return
 		}
-		hashed := hasher.Sum(nil)
+		// hashed := hasher.Sum(nil)
 
-		// Don't pass Hash to Sign for ed25519 as it doesn't support it
-		// and will return an error ("ed25519: cannot sign hashed message").
-		if keyAlgo == "ed25519" {
-			hash = crypto.Hash(0)
-		}
-
-		sig, err := options.Signer.Sign(randReader, hashed, hash)
+		sig, err := options.Signer.SignPKCS1v15(openssl.SHA256_Method, buffer.Bytes())
 		if err != nil {
 			closeReadWithError(err)
 			return

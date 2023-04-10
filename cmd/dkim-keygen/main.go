@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto"
-	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -22,7 +21,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&keyType, "t", "rsa", "key type (rsa, ed25519)")
+	flag.StringVar(&keyType, "t", "rsa", "key type (rsa)")
 	flag.IntVar(&nBits, "b", 3072, "number of bits in the key (only for RSA)")
 	flag.StringVar(&filename, "f", "dkim.priv", "private key filename")
 	flag.Parse()
@@ -37,9 +36,6 @@ func main() {
 	case "rsa":
 		log.Printf("Generating a %v-bit RSA key", nBits)
 		privKey, err = rsa.GenerateKey(rand.Reader, nBits)
-	case "ed25519":
-		log.Printf("Generating an Ed25519 key")
-		_, privKey, err = ed25519.GenerateKey(rand.Reader)
 	default:
 		log.Fatalf("Unsupported key type %q", keyType)
 	}
@@ -83,8 +79,6 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to marshal public key: %v", err)
 		}
-	case ed25519.PublicKey:
-		pubBytes = pubKey
 	default:
 		panic("unreachable")
 	}

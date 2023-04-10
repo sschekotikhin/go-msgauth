@@ -1,13 +1,9 @@
 package dkim
 
 import (
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/base64"
-	"encoding/pem"
 	"time"
 
-	"golang.org/x/crypto/ed25519"
+	"github.com/spacemonkeygo/openssl"
 )
 
 const testPrivateKeyPEM = `-----BEGIN RSA PRIVATE KEY-----
@@ -27,26 +23,16 @@ GMot/L2x0IYyMLAz6oLWh2hm7zwtb0CgOrPo1ke44hFYnfc=
 -----END RSA PRIVATE KEY-----
 `
 
-const testEd25519SeedBase64 = "nWGxne/9WmC6hEr0kuwsxERJxWl7MmkZcDusAxyuf2A="
-
 var (
-	testPrivateKey        *rsa.PrivateKey
-	testEd25519PrivateKey ed25519.PrivateKey
+	testPrivateKey openssl.PrivateKey
 )
 
 func init() {
-	block, _ := pem.Decode([]byte(testPrivateKeyPEM))
 	var err error
-	testPrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	testPrivateKey, err = openssl.LoadPrivateKeyFromPEM([]byte(testPrivateKeyPEM))
 	if err != nil {
 		panic(err)
 	}
-
-	ed25519Seed, err := base64.StdEncoding.DecodeString(testEd25519SeedBase64)
-	if err != nil {
-		panic(err)
-	}
-	testEd25519PrivateKey = ed25519.NewKeyFromSeed(ed25519Seed)
 
 	now = func() time.Time {
 		return time.Unix(424242, 0)

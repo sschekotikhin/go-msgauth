@@ -16,8 +16,6 @@ const dnsPublicKey = "v=DKIM1; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQ" +
 	"/RtdC2UzJ1lWT947qR+Rcac2gbto/NMqJ0fzfVjH4OuKhi" +
 	"tdY9tf6mcwGjaNBcWToIMmPSPDdQPNUYckcQ2QIDAQAB"
 
-const dnsEd25519PublicKey = "v=DKIM1; k=ed25519; p=11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo="
-
 func init() {
 	queryMethods["dns/txt"] = queryTest
 }
@@ -29,8 +27,6 @@ func queryTest(domain, selector string, txtLookup txtLookupFunc) (*queryResult, 
 		return parsePublicKey(dnsPublicKey)
 	case "newengland._domainkey.example.com":
 		return parsePublicKey(dnsRawRSAPublicKey)
-	case "brisbane._domainkey.football.example.com":
-		return parsePublicKey(dnsEd25519PublicKey)
 	}
 	return nil, fmt.Errorf("unknown test DNS record %v", record)
 }

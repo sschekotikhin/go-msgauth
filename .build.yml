@@ -2,7 +2,7 @@ image: alpine/edge
 packages:
   - go
 sources:
-  - https://github.com/emersion/go-msgauth
+  - https://github.com/sschekotikhin/go-msgauth
 artifacts:
   - coverage.html
 tasks:

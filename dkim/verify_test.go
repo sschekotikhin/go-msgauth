@@ -1,7 +1,6 @@
 package dkim
 
 import (
-	"errors"
 	"io"
 	"net"
 	"reflect"
@@ -160,56 +159,6 @@ func TestVerify_rawRSA(t *testing.T) {
 	}
 }
 
-const verifiedEd25519MailString = `DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
- d=football.example.com; i=@football.example.com;
- q=dns/txt; s=brisbane; t=1528637909; h=from : to :
- subject : date : message-id : from : subject : date;
- bh=2jUSOH9NhtVGCQWNr9BrIAPreKQjO6Sn7XIkfJVOzv8=;
- b=/gCrinpcQOoIfuHNQIbq4pgh9kyIK3AQUdt9OdqQehSwhEIug4D11Bus
- Fa3bT3FY5OsU7ZbnKELq+eXdp1Q1Dw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=football.example.com; i=@football.example.com;
- q=dns/txt; s=test; t=1528637909; h=from : to : subject :
- date : message-id : from : subject : date;
- bh=2jUSOH9NhtVGCQWNr9BrIAPreKQjO6Sn7XIkfJVOzv8=;
- b=F45dVWDfMbQDGHJFlXUNB2HKfbCeLRyhDXgFpEL8GwpsRe0IeIixNTe3
- DhCVlUrSjV4BwcVcOF6+FF3Zo9Rpo1tFOeS9mPYQTnGdaSGsgeefOsk2Jz
- dA+L10TeYt9BgDfQNZtKdN1WO//KgIqXP7OdEFE4LjFYNcUxZQ4FADY+8=
-From: Joe SixPack <joe@football.example.com>
-To: Suzie Q <suzie@shopping.example.net>
-Subject: Is dinner ready?
-Date: Fri, 11 Jul 2003 21:00:37 -0700 (PDT)
-Message-ID: <20030712040037.46341.5F8J@football.example.com>
-
-Hi.
-
-We lost the game.  Are you hungry yet?
-
-Joe.`
-
-var testEd25519Verification = &Verification{
-	Domain:     "football.example.com",
-	Identifier: "@football.example.com",
-	HeaderKeys: []string{"from", "to", "subject", "date", "message-id", "from", "subject", "date"},
-	Time:       time.Unix(1528637909, 0),
-}
-
-func TestVerify_ed25519(t *testing.T) {
-	r := newMailStringReader(verifiedEd25519MailString)
-
-	verifications, err := Verify(r)
-	if err != nil {
-		t.Fatalf("Expected no error while verifying signature, got: %v", err)
-	} else if len(verifications) != 2 {
-		t.Fatalf("Expected exactly two verifications, got %v", len(verifications))
-	}
-
-	v := verifications[0]
-	if !reflect.DeepEqual(testEd25519Verification, v) {
-		t.Errorf("Expected verification to be \n%+v\n but got \n%+v", testEd25519Verification, v)
-	}
-}
-
 // errorReader reads from r and then returns an arbitrary error.
 type errorReader struct {
 	r   io.Reader
@@ -222,25 +171,6 @@ func (r *errorReader) Read(b []byte) (int, error) {
 		return n, r.err
 	}
 	return n, err
-}
-
-func TestVerify_invalid(t *testing.T) {
-	r := newMailStringReader("asdf")
-	_, err := Verify(r)
-	if err == nil {
-		t.Fatalf("Expected error while verifying signature, got nil")
-	}
-
-	expectedErr := errors.New("expected test error")
-
-	r = &errorReader{
-		r:   newMailStringReader(verifiedEd25519MailString),
-		err: expectedErr,
-	}
-	_, err = Verify(r)
-	if err != expectedErr {
-		t.Fatalf("Expected error while verifying signature, got: %v", err)
-	}
 }
 
 const tooManySignaturesMailString = `DKIM-Signature: v=1; a=rsa-sha256; s=brisbane; d=example.com;

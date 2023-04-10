@@ -2,16 +2,16 @@ package dkim_test
 
 import (
 	"bytes"
-	"crypto"
 	"log"
 	"strings"
 
-	"github.com/emersion/go-msgauth/dkim"
+	"github.com/spacemonkeygo/openssl"
+	"github.com/sschekotikhin/go-msgauth/dkim"
 )
 
 var (
 	mailString string
-	privateKey crypto.Signer
+	privateKey openssl.PrivateKey
 )
 
 func ExampleSign() {

@@ -2,8 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto"
-	"crypto/x509"
 	"encoding/pem"
 	"flag"
 	"fmt"
@@ -20,9 +18,9 @@ import (
 	"syscall"
 
 	"github.com/emersion/go-milter"
-	"github.com/emersion/go-msgauth/authres"
-	"github.com/emersion/go-msgauth/dkim"
-	"golang.org/x/crypto/ed25519"
+	"github.com/spacemonkeygo/openssl"
+	"github.com/sschekotikhin/go-msgauth/authres"
+	"github.com/sschekotikhin/go-msgauth/dkim"
 )
 
 var (
@@ -34,7 +32,7 @@ var (
 	verbose        bool
 )
 
-var privateKey crypto.Signer
+var privateKey openssl.PrivateKey
 
 var signHeaderKeys = []string{
 	"From",
@@ -323,7 +321,7 @@ func (s *session) Body(m *milter.Modifier) (milter.Response, error) {
 	return milter.RespAccept, nil
 }
 
-func loadPrivateKey(path string) (crypto.Signer, error) {
+func loadPrivateKey(path string) (openssl.PrivateKey, error) {
 	b, err := ioutil.ReadFile(privateKeyPath)
 	if err != nil {
 		return nil, err
@@ -336,18 +334,9 @@ func loadPrivateKey(path string) (crypto.Signer, error) {
 
 	switch strings.ToUpper(block.Type) {
 	case "PRIVATE KEY":
-		k, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-		if err != nil {
-			return nil, err
-		}
-		return k.(crypto.Signer), nil
+		return openssl.LoadPrivateKeyFromPEM(block.Bytes)
 	case "RSA PRIVATE KEY":
-		return x509.ParsePKCS1PrivateKey(block.Bytes)
-	case "EDDSA PRIVATE KEY":
-		if len(block.Bytes) != ed25519.PrivateKeySize {
-			return nil, fmt.Errorf("invalid Ed25519 private key size")
-		}
-		return ed25519.PrivateKey(block.Bytes), nil
+		return openssl.LoadPrivateKeyFromPEM(block.Bytes)
 	default:
 		return nil, fmt.Errorf("unknown private key type: '%v'", block.Type)
 	}

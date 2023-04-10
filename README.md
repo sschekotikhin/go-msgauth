@@ -1,6 +1,6 @@
 # go-msgauth
 
-[![godocs.io](https://godocs.io/github.com/emersion/go-msgauth?status.svg)](https://godocs.io/github.com/emersion/go-msgauth)
+[![godocs.io](https://godocs.io/github.com/sschekotikhin/go-msgauth?status.svg)](https://godocs.io/github.com/sschekotikhin/go-msgauth)
 [![builds.sr.ht status](https://builds.sr.ht/~emersion/go-msgauth/commits/master.svg?)](https://builds.sr.ht/~emersion/go-msgauth/commits/master)
 
 A Go library and tools to authenticate e-mails:
@@ -9,7 +9,7 @@ A Go library and tools to authenticate e-mails:
 * Create and parse [Authentication-Results header fields][Authentication-Results]
 * Fetch [DMARC] records
 
-## DKIM [![godocs.io](https://godocs.io/github.com/emersion/go-msgauth/dkim?status.svg)](https://godocs.io/github.com/emersion/go-msgauth/dkim)
+## DKIM [![godocs.io](https://godocs.io/github.com/sschekotikhin/go-msgauth/dkim?status.svg)](https://godocs.io/github.com/sschekotikhin/go-msgauth/dkim)
 
 ### Sign
 
@@ -59,7 +59,7 @@ zone. See [RFC 6376 appendix C](https://tools.ietf.org/html/rfc6376#appendix-C).
 You can use the `dkim-keygen` tool included in go-msgauth to generate the key
 and the TXT record.
 
-## Authentication-Results [![godocs.io](https://godocs.io/github.com/emersion/go-msgauth/authres?status.svg)](https://godocs.io/github.com/emersion/go-msgauth/authres)
+## Authentication-Results [![godocs.io](https://godocs.io/github.com/sschekotikhin/go-msgauth/authres?status.svg)](https://godocs.io/github.com/sschekotikhin/go-msgauth/authres)
 
 ```go
 // Format
@@ -79,7 +79,7 @@ if err != nil {
 log.Println(identifier, results)
 ```
 
-## DMARC [![godocs.io](https://godocs.io/github.com/emersion/go-msgauth/dmarc?status.svg)](https://godocs.io/github.com/emersion/go-msgauth/dmarc)
+## DMARC [![godocs.io](https://godocs.io/github.com/sschekotikhin/go-msgauth/dmarc?status.svg)](https://godocs.io/github.com/sschekotikhin/go-msgauth/dmarc)
 
 See the GoDoc page.
 
