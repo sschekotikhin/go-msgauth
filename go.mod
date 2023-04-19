@@ -1,6 +1,6 @@
 module github.com/sschekotikhin/go-msgauth
 
-go 1.12
+go 1.20
 
 require (
 	github.com/emersion/go-milter v0.3.3
