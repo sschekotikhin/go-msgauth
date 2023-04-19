@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/emersion/go-milter v0.3.3
-	github.com/sschekotikhin/openssl v0.1.0
+	github.com/sschekotikhin/openssl v0.0.0-20230410143701-553791a159a9
 )
 
 require (

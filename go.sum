@@ -9,8 +9,8 @@ github.com/martinlindhe/base36 v1.0.0/go.mod h1:+AtEs8xrBpCeYgSLoY/aJ6Wf37jtBuR0
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572 h1:RC6RW7j+1+HkWaX/Yh71Ee5ZHaHYt7ZP4sQgUrm6cDU=
 github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572/go.mod h1:w0SWMsp6j9O/dk4/ZpIhL+3CkG8ofA2vuv7k+ltqUMc=
-github.com/sschekotikhin/openssl v0.1.0 h1:1HmEMu0U5Ioaj+3A6jBEI9AjZKdq/7be70eX8fE5D4Q=
-github.com/sschekotikhin/openssl v0.1.0/go.mod h1:ZP0VAVbbh0egXsqODqP8uKTKlnNduw+hoCf3EJyrkmY=
+github.com/sschekotikhin/openssl v0.0.0-20230410143701-553791a159a9 h1:FF1WZ3C0GsgngAhArGZd9uKhFghshlKvh96P96r87Nk=
+github.com/sschekotikhin/openssl v0.0.0-20230410143701-553791a159a9/go.mod h1:ZP0VAVbbh0egXsqODqP8uKTKlnNduw+hoCf3EJyrkmY=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 golang.org/x/sys v0.7.0 h1:3jlCCIQZPdOYu1h8BkNvLz8Kgwtae2cagcG/VamtZRU=
